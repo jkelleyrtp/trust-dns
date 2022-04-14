@@ -468,7 +468,7 @@ mod tests {
         let mut pool = NameServerPool::<_, TokioConnectionProvider>::from_config(
             &resolver_config,
             &ResolverOpts::default(),
-            TokioHandle,
+            TokioHandle::default(),
         );
 
         let name = Name::parse("www.example.com.", None).unwrap();
@@ -512,7 +512,7 @@ mod tests {
         env_logger::try_init().ok();
 
         let io_loop = Runtime::new().unwrap();
-        let conn_provider = TokioConnectionProvider::new(TokioHandle);
+        let conn_provider = TokioConnectionProvider::new(TokioHandle::default());
 
         let tcp = NameServerConfig {
             socket_addr: SocketAddr::new(IpAddr::V4(Ipv4Addr::new(8, 8, 8, 8)), 53),
@@ -537,7 +537,10 @@ mod tests {
             Arc::from([]),
             Arc::clone(&name_servers),
             #[cfg(feature = "mdns")]
-            name_server::mdns_nameserver(opts, TokioConnectionProvider::new(TokioHandle)),
+            name_server::mdns_nameserver(
+                opts,
+                TokioConnectionProvider::new(TokioHandle::default()),
+            ),
         );
 
         let name = Name::from_str("www.example.com.").unwrap();

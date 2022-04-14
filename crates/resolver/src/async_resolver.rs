@@ -128,7 +128,7 @@ impl TokioAsyncResolver {
     /// documentation for `AsyncResolver` for more information on how to use
     /// the background future.
     pub fn tokio(config: ResolverConfig, options: ResolverOpts) -> Result<Self, ResolveError> {
-        Self::new(config, options, TokioHandle)
+        Self::new(config, options, TokioHandle::default())
     }
 
     /// Constructs a new Tokio based Resolver with the system configuration.
@@ -141,7 +141,7 @@ impl TokioAsyncResolver {
         doc(cfg(all(feature = "system-config", any(unix, target_os = "windows"))))
     )]
     pub fn tokio_from_system_conf() -> Result<Self, ResolveError> {
-        Self::from_system_conf(TokioHandle)
+        Self::from_system_conf(TokioHandle::default())
     }
 }
 
@@ -1137,7 +1137,7 @@ mod tests {
     fn test_lookup_google() {
         use super::testing::lookup_test;
         let io_loop = Runtime::new().expect("failed to create tokio runtime");
-        let handle = TokioHandle;
+        let handle = TokioHandle::default();
         lookup_test::<Runtime, TokioRuntime>(ResolverConfig::google(), io_loop, handle)
     }
 
@@ -1145,7 +1145,7 @@ mod tests {
     fn test_lookup_cloudflare() {
         use super::testing::lookup_test;
         let io_loop = Runtime::new().expect("failed to create tokio runtime");
-        let handle = TokioHandle;
+        let handle = TokioHandle::default();
         lookup_test::<Runtime, TokioRuntime>(ResolverConfig::cloudflare(), io_loop, handle)
     }
 
@@ -1153,7 +1153,7 @@ mod tests {
     fn test_lookup_quad9() {
         use super::testing::lookup_test;
         let io_loop = Runtime::new().expect("failed to create tokio runtime");
-        let handle = TokioHandle;
+        let handle = TokioHandle::default();
         lookup_test::<Runtime, TokioRuntime>(ResolverConfig::quad9(), io_loop, handle)
     }
 
@@ -1161,7 +1161,7 @@ mod tests {
     fn test_ip_lookup() {
         use super::testing::ip_lookup_test;
         let io_loop = Runtime::new().expect("failed to create tokio runtime");
-        let handle = TokioHandle;
+        let handle = TokioHandle::default();
         ip_lookup_test::<Runtime, TokioRuntime>(io_loop, handle)
     }
 
@@ -1169,7 +1169,7 @@ mod tests {
     fn test_ip_lookup_across_threads() {
         use super::testing::ip_lookup_across_threads_test;
         let _io_loop = Runtime::new().expect("failed to create tokio runtime io_loop");
-        let handle = TokioHandle;
+        let handle = TokioHandle::default();
         ip_lookup_across_threads_test::<Runtime, TokioRuntime>(handle)
     }
 
@@ -1178,7 +1178,7 @@ mod tests {
     fn test_sec_lookup() {
         use super::testing::sec_lookup_test;
         let io_loop = Runtime::new().expect("failed to create tokio runtime io_loop");
-        let handle = TokioHandle;
+        let handle = TokioHandle::default();
         sec_lookup_test::<Runtime, TokioRuntime>(io_loop, handle);
     }
 
@@ -1187,7 +1187,7 @@ mod tests {
     fn test_sec_lookup_fails() {
         use super::testing::sec_lookup_fails_test;
         let io_loop = Runtime::new().expect("failed to create tokio runtime io_loop");
-        let handle = TokioHandle;
+        let handle = TokioHandle::default();
         sec_lookup_fails_test::<Runtime, TokioRuntime>(io_loop, handle);
     }
 
@@ -1198,7 +1198,7 @@ mod tests {
     fn test_system_lookup() {
         use super::testing::system_lookup_test;
         let io_loop = Runtime::new().expect("failed to create tokio runtime io_loop");
-        let handle = TokioHandle;
+        let handle = TokioHandle::default();
         system_lookup_test::<Runtime, TokioRuntime>(io_loop, handle);
     }
 
@@ -1209,7 +1209,7 @@ mod tests {
     fn test_hosts_lookup() {
         use super::testing::hosts_lookup_test;
         let io_loop = Runtime::new().expect("failed to create tokio runtime io_loop");
-        let handle = TokioHandle;
+        let handle = TokioHandle::default();
         hosts_lookup_test::<Runtime, TokioRuntime>(io_loop, handle);
     }
 
@@ -1217,7 +1217,7 @@ mod tests {
     fn test_fqdn() {
         use super::testing::fqdn_test;
         let io_loop = Runtime::new().expect("failed to create tokio runtime io_loop");
-        let handle = TokioHandle;
+        let handle = TokioHandle::default();
         fqdn_test::<Runtime, TokioRuntime>(io_loop, handle);
     }
 
@@ -1225,7 +1225,7 @@ mod tests {
     fn test_ndots() {
         use super::testing::ndots_test;
         let io_loop = Runtime::new().expect("failed to create tokio runtime io_loop");
-        let handle = TokioHandle;
+        let handle = TokioHandle::default();
         ndots_test::<Runtime, TokioRuntime>(io_loop, handle);
     }
 
@@ -1233,7 +1233,7 @@ mod tests {
     fn test_large_ndots() {
         use super::testing::large_ndots_test;
         let io_loop = Runtime::new().expect("failed to create tokio runtime io_loop");
-        let handle = TokioHandle;
+        let handle = TokioHandle::default();
         large_ndots_test::<Runtime, TokioRuntime>(io_loop, handle);
     }
 
@@ -1241,7 +1241,7 @@ mod tests {
     fn test_domain_search() {
         use super::testing::domain_search_test;
         let io_loop = Runtime::new().expect("failed to create tokio runtime io_loop");
-        let handle = TokioHandle;
+        let handle = TokioHandle::default();
         domain_search_test::<Runtime, TokioRuntime>(io_loop, handle);
     }
 
@@ -1249,7 +1249,7 @@ mod tests {
     fn test_search_list() {
         use super::testing::search_list_test;
         let io_loop = Runtime::new().expect("failed to create tokio runtime io_loop");
-        let handle = TokioHandle;
+        let handle = TokioHandle::default();
         search_list_test::<Runtime, TokioRuntime>(io_loop, handle);
     }
 
@@ -1257,7 +1257,7 @@ mod tests {
     fn test_idna() {
         use super::testing::idna_test;
         let io_loop = Runtime::new().expect("failed to create tokio runtime io_loop");
-        let handle = TokioHandle;
+        let handle = TokioHandle::default();
         idna_test::<Runtime, TokioRuntime>(io_loop, handle);
     }
 
@@ -1265,7 +1265,7 @@ mod tests {
     fn test_localhost_ipv4() {
         use super::testing::localhost_ipv4_test;
         let io_loop = Runtime::new().expect("failed to create tokio runtime io_loop");
-        let handle = TokioHandle;
+        let handle = TokioHandle::default();
         localhost_ipv4_test::<Runtime, TokioRuntime>(io_loop, handle);
     }
 
@@ -1273,7 +1273,7 @@ mod tests {
     fn test_localhost_ipv6() {
         use super::testing::localhost_ipv6_test;
         let io_loop = Runtime::new().expect("failed to create tokio runtime io_loop");
-        let handle = TokioHandle;
+        let handle = TokioHandle::default();
         localhost_ipv6_test::<Runtime, TokioRuntime>(io_loop, handle);
     }
 
@@ -1281,7 +1281,7 @@ mod tests {
     fn test_search_ipv4_large_ndots() {
         use super::testing::search_ipv4_large_ndots_test;
         let io_loop = Runtime::new().expect("failed to create tokio runtime io_loop");
-        let handle = TokioHandle;
+        let handle = TokioHandle::default();
         search_ipv4_large_ndots_test::<Runtime, TokioRuntime>(io_loop, handle);
     }
 
@@ -1289,7 +1289,7 @@ mod tests {
     fn test_search_ipv6_large_ndots() {
         use super::testing::search_ipv6_large_ndots_test;
         let io_loop = Runtime::new().expect("failed to create tokio runtime io_loop");
-        let handle = TokioHandle;
+        let handle = TokioHandle::default();
         search_ipv6_large_ndots_test::<Runtime, TokioRuntime>(io_loop, handle);
     }
 
@@ -1297,13 +1297,13 @@ mod tests {
     fn test_search_ipv6_name_parse_fails() {
         use super::testing::search_ipv6_name_parse_fails_test;
         let io_loop = Runtime::new().expect("failed to create tokio runtime io_loop");
-        let handle = TokioHandle;
+        let handle = TokioHandle::default();
         search_ipv6_name_parse_fails_test::<Runtime, TokioRuntime>(io_loop, handle);
     }
 
     #[test]
     fn test_build_names_onion() {
-        let handle = TokioHandle;
+        let handle = TokioHandle::default();
         let mut config = ResolverConfig::default();
         config.add_search(Name::from_ascii("example.com.").unwrap());
         let resolver =
