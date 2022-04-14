@@ -288,7 +288,7 @@ mod tests {
             bind_addr: None,
         };
         let io_loop = Runtime::new().unwrap();
-        let runtime_handle = TokioHandle;
+        let runtime_handle = TokioHandle::default();
         let name_server = future::lazy(|_| {
             NameServer::<_, TokioConnectionProvider>::new(
                 config,
@@ -327,7 +327,7 @@ mod tests {
             bind_addr: None,
         };
         let io_loop = Runtime::new().unwrap();
-        let runtime_handle = TokioHandle;
+        let runtime_handle = TokioHandle::default();
         let name_server = future::lazy(|_| {
             NameServer::<_, TokioConnectionProvider>::new(config, options, runtime_handle)
         });
