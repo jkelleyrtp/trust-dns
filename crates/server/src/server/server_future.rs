@@ -15,6 +15,7 @@ use futures_util::StreamExt;
 use log::{debug, info, warn};
 #[cfg(feature = "dns-over-rustls")]
 use rustls::{Certificate, PrivateKey};
+use tokio::sync::SemaphorePermit;
 use tokio::{net, task::JoinSet};
 use trust_dns_proto::rr::Record;
 
@@ -682,8 +683,20 @@ impl<T: RequestHandler> ServerFuture<T> {
     }
 
     /// This will run until a background task of the trust_dns_server ends.
-    pub async fn block_until_done(mut self) -> Result<(), ProtoError> {
+    pub async fn block_until_done(
+        mut self,
+        maybe_permit: Option<SemaphorePermit<'static>>,
+    ) -> Result<(), ProtoError> {
         let result = self.join_set.join_one().await;
+
+        let mut join_set = self.join_set;
+
+        if let Some(permit) = maybe_permit {
+            tokio::spawn(async move {
+                let _permit = permit;
+                join_set.shutdown().await;
+            });
+        }
 
         match result {
             Ok(None) => {
