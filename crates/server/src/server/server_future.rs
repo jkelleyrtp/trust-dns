@@ -691,8 +691,12 @@ impl<T: RequestHandler> ServerFuture<T> {
 
         let mut join_set = self.join_set;
 
-        if let Some(_permit) = maybe_permit {
-            join_set.shutdown().await;
+        if let Some(permit) = maybe_permit {
+            tokio::spawn(async move {
+                let guard = permit;
+                join_set.shutdown().await;
+                drop(guard);
+            });
         }
 
         match result {
