@@ -1883,6 +1883,7 @@ dependencies = [
  "openssl",
  "rusqlite",
  "rustls",
+ "scopeguard",
  "serde",
  "thiserror",
  "time",

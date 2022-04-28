@@ -15,7 +15,7 @@ use futures_util::StreamExt;
 use log::{debug, info, warn};
 #[cfg(feature = "dns-over-rustls")]
 use rustls::{Certificate, PrivateKey};
-use tokio::sync::SemaphorePermit;
+use tokio::sync::{Mutex, SemaphorePermit};
 use tokio::{net, task::JoinSet};
 use trust_dns_proto::rr::Record;
 
@@ -684,20 +684,26 @@ impl<T: RequestHandler> ServerFuture<T> {
 
     /// This will run until a background task of the trust_dns_server ends.
     pub async fn block_until_done(
-        mut self,
+        self,
         maybe_permit: Option<SemaphorePermit<'static>>,
     ) -> Result<(), ProtoError> {
-        let result = self.join_set.join_one().await;
+        // this allows us to handle the shutdown process out-of-band with the rest of execution
+        // here, fixing the colors issue for drop
+        let join_set = Arc::new(Mutex::new(self.join_set));
 
-        let mut join_set = self.join_set;
+        // To make this cancel safe, we are creating a scope guard which will acquire and shut down
+        // the joinset (and release the semaphore) when we drop this future/task
+        let _guard = scopeguard::guard(join_set.clone(), |set| {
+            if let Some(permit) = maybe_permit {
+                tokio::spawn(async move {
+                    let guard = permit;
+                    set.lock().await.shutdown().await;
+                    drop(guard);
+                });
+            }
+        });
 
-        if let Some(permit) = maybe_permit {
-            tokio::spawn(async move {
-                let guard = permit;
-                join_set.shutdown().await;
-                drop(guard);
-            });
-        }
+        let result = join_set.lock().await.join_one().await;
 
         match result {
             Ok(None) => {
