@@ -706,12 +706,12 @@ impl<T: RequestHandler> ServerFuture<T> {
         let result = join_set.lock().await.join_one().await;
 
         match result {
-            Ok(None) => {
+            None => {
                 log::warn!("block_until_done called with no pending tasks");
                 Ok(())
             }
-            Ok(Some(x)) => x,
-            Err(e) => Err(ProtoError::from(format!("Internal error in spawn: {}", e))),
+            Some(Ok(x)) => x,
+            Some(Err(e)) => Err(ProtoError::from(format!("Internal error in spawn: {}", e))),
         }
     }
 }
