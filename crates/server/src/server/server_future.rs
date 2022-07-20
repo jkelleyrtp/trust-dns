@@ -598,7 +598,6 @@ impl<T: RequestHandler> ServerFuture<T> {
             }
         });
 
-        self.tasks.push(ServerTask(task));
         Ok(())
     }
 
