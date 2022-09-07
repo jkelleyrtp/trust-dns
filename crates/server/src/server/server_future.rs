@@ -702,11 +702,11 @@ impl<T: RequestHandler> ServerFuture<T> {
             }
         });
 
-        let result = join_set.lock().await.join_one().await;
+        let result = join_set.lock().await.join_next().await;
 
         match result {
             None => {
-                log::warn!("block_until_done called with no pending tasks");
+                warn!("block_until_done called with no pending tasks");
                 Ok(())
             }
             Some(Ok(x)) => x,
