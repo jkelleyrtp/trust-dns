@@ -11,12 +11,12 @@ use std::{
     time::Duration,
 };
 
-use futures_util::StreamExt;
-use log::{debug, info, warn};
+use futures_util::{future, StreamExt};
 #[cfg(feature = "dns-over-rustls")]
 use rustls::{Certificate, PrivateKey};
 use tokio::sync::{Mutex, SemaphorePermit};
 use tokio::{net, task::JoinSet};
+use tracing::{debug, info, warn};
 use trust_dns_proto::rr::Record;
 
 #[cfg(all(feature = "dns-over-openssl", not(feature = "dns-over-rustls")))]
