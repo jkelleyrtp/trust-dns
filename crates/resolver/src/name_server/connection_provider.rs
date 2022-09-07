@@ -381,15 +381,10 @@ pub mod tokio_runtime {
     use super::*;
     use tokio::net::UdpSocket as TokioUdpSocket;
 
+    /// A Tokio runtime provider
     #[derive(Clone, Default)]
     pub struct TokioHandle {
         join_set: std::sync::Arc<std::sync::Mutex<tokio::task::JoinSet<Result<(), ProtoError>>>>,
-    }
-
-    impl TokioHandle {
-        pub fn new() -> Self {
-            Self::default()
-        }
     }
 
     impl Spawn for TokioHandle {
